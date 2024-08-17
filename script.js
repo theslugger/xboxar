@@ -5,6 +5,7 @@ let storedIds = $persistentStore.read("idsToReplace");
 if ($response.body) {
     let body = JSON.parse($response.body);
     if (body && body.cart && body.cart.lineItems && body.cart.lineItems.length > 0) {
+        // 获取当前请求的产品、可用性和SKU ID
         let item = body.cart.lineItems[0];
         let ids = {
             productId: item.productId,
@@ -13,20 +14,20 @@ if ($response.body) {
         };
 
         if (!storedIds) {
-            // 如果没有先前的ID，存储当前的ID作为待替换ID
+            // 第一次存储ID
             $persistentStore.write(JSON.stringify(ids), "idsToReplace");
             console.log("First set of IDs stored: " + JSON.stringify(ids));
             $notification.post("第一次ID存储", "成功存储以下ID为待替换ID:", `产品ID: ${ids.productId}, 可用性ID: ${ids.availabilityId}, SKU ID: ${ids.skuId}`);
-            
-            // 清空body对象
-            body = null; // 或者可以设置为 body = {}
-            console.log("Body object cleared after storing IDs.");
         } else {
-            // 如果已经有存储的ID，将当前ID存储为目标替换ID
-            $persistentStore.write(JSON.stringify(ids), "idsToTarget");
-            console.log("Second set of IDs stored: " + JSON.stringify(ids));
-            $notification.post("第二次ID存储", "成功存储以下ID为目标替换ID:", `产品ID: ${ids.productId}, 可用性ID: ${ids.availabilityId}, SKU ID: ${ids.skuId}`);
+            // 如果已经有存储的ID，此处应再次读取响应以确保获取的是最新的数据
+            let newIds = ids; // 新的商品ID，假设这是第二次捕获的数据
+            $persistentStore.write(JSON.stringify(newIds), "idsToTarget");
+            console.log("Second set of IDs stored: " + JSON.stringify(newIds));
+            $notification.post("第二次ID存储", "成功存储以下新ID为目标替换ID:", `产品ID: ${newIds.productId}, 可用性ID: ${newIds.availabilityId}, SKU ID: ${newIds.skuId}`);
         }
+    } else {
+        console.log("No line items found in the cart.");
+        $notification.post("购物车数据错误", "购物车中没有找到条目", "");
     }
     $done({});
 } else {
