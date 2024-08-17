@@ -17,13 +17,15 @@ if ($response.body) {
             $persistentStore.write(JSON.stringify(ids), "idsToReplace");
             console.log("First set of IDs stored: " + JSON.stringify(ids));
             $notification.post("第一次ID存储", "成功存储以下ID为待替换ID:", `产品ID: ${ids.productId}, 可用性ID: ${ids.availabilityId}, SKU ID: ${ids.skuId}`);
+            
+            // 清空body对象
+            body = null; // 或者可以设置为 body = {}
+            console.log("Body object cleared after storing IDs.");
         } else {
-            // 如果已经有存储的ID，使用新变量来存储当前ID作为目标替换ID
-            let item1 = item;  // 这行实际上是多余的，因为item已经包含了需要的信息
-            let ids1 = ids;  // 直接使用ids即可
-            $persistentStore.write(JSON.stringify(ids1), "idsToTarget");
-            console.log("Second set of IDs stored: " + JSON.stringify(ids1));
-            $notification.post("第二次ID存储", "成功存储以下ID为目标替换ID:", `产品ID: ${ids1.productId}, 可用性ID: ${ids1.availabilityId}, SKU ID: ${ids1.skuId}`);
+            // 如果已经有存储的ID，将当前ID存储为目标替换ID
+            $persistentStore.write(JSON.stringify(ids), "idsToTarget");
+            console.log("Second set of IDs stored: " + JSON.stringify(ids));
+            $notification.post("第二次ID存储", "成功存储以下ID为目标替换ID:", `产品ID: ${ids.productId}, 可用性ID: ${ids.availabilityId}, SKU ID: ${ids.skuId}`);
         }
     }
     $done({});
