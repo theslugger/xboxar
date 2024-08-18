@@ -1,4 +1,4 @@
-// 检查是否存在请求体function generateRandom8DigitNumber() {
+function generateRandom8DigitNumber() {
     let randomNumber = '';
     for (let i = 0; i < 9; i++) {
         randomNumber += Math.floor(Math.random() * 8).toString();
